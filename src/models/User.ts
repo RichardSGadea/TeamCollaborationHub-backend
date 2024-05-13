@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { Role } from "./Role";
+import { Task } from "./Task";
 
 @Entity("users")
 export class User {
@@ -31,4 +32,9 @@ export class User {
     @ManyToOne(()=>Role,(role)=>role.users)
     @JoinColumn ({name:"role_id"})
     role!:Role;
+
+    //Relation: User {1}...{0..n} Task
+
+    @OneToMany(()=>Task,(task)=>task.user)
+    tasks?: Task[];
 }
