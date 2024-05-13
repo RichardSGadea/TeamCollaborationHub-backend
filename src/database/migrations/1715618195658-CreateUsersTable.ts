@@ -32,6 +32,11 @@ export class CreateUsersTable1715618195658 implements MigrationInterface {
                         isUnique: true,
                     },
                     {
+                        name: "password",
+                        type: "varchar",
+                        length: "120"
+                    },
+                    {
                         name: "is_active",
                         type: "boolean",
                         default: true,
