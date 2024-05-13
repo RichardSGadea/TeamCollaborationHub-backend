@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { Role } from "./Role";
 import { Task } from "./Task";
+import { Group } from "./Group";
 
 @Entity("users")
 export class User {
@@ -37,4 +38,19 @@ export class User {
 
     @OneToMany(()=>Task,(task)=>task.user)
     tasks?: Task[];
+
+    //Relation: User {0..n}...{0..n} Groups
+    @ManyToMany(()=>Group, group => group.users)
+    @JoinTable({
+        name:"members",
+        joinColumn:{
+            name:"user_id",
+            referencedColumnName: "id"
+        },
+        inverseJoinColumn:{
+            name:"group_id",
+            referencedColumnName: "id"
+        }
+    })
+    members?: Group[]
 }
