@@ -1,13 +1,10 @@
 import express from "express"
+import { userController } from "../controllers/userController";
 
 const router = express.Router();
 
 //Users routes
-router.get('/profile',(req,res) => {
-    res.send('get profile')
-})
-router.put('/profile',(req,res) => {
-    res.send('put profile')
-})
+router.get('/profile', userController.getProfile)
+router.put('/profile',userController.updateProfile)
 
 export default router;
