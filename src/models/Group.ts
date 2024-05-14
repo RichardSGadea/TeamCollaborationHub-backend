@@ -1,9 +1,9 @@
-import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { BaseEntity, Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { Task } from "./Task";
 import { User } from "./User";
 
 @Entity("groups")
-export class Group {
+export class Group extends BaseEntity {
 
     @PrimaryGeneratedColumn()
     id!:number;

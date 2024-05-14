@@ -1,10 +1,10 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
 import { User } from "./User";
 import { TaskState } from "./TaskState";
 import { Group } from "./Group";
 
 @Entity()
-export class Task {
+export class Task extends BaseEntity{
     @PrimaryGeneratedColumn()
     id!:number;
 
