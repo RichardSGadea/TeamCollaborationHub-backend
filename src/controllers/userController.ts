@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { User } from "../models/User";
 import bcrypt from "bcrypt";
+import { UserRoles } from "../constants/UserRoles";
 
 export const userController = {
     async getProfile(req: Request, res: Response): Promise<void> {
@@ -79,6 +80,37 @@ export const userController = {
         } catch (error) {
             res.status(500).json({
                 message: "Failed to update user profile"
+            })
+        }
+    },
+
+    async getStudents(req: Request, res: Response): Promise<void> {
+        try {
+            
+            const [students, totalStudents] = await User.findAndCount({
+                select:{
+                    id: true,
+                    firstName: true,
+                    email: true,
+                },
+                where:{
+                    role: UserRoles.STUDENT
+                }
+            })
+
+            if (totalStudents === 0) {
+                res.status(404).json({ message: "Students not found" });
+                return;
+            }
+
+            res.status(200).json({
+                students: students,
+            });
+
+
+        } catch (error) {
+            res.status(500).json({
+                message: "Failed to retrieve students"
             })
         }
     },
