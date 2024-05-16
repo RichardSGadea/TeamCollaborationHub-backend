@@ -1,10 +1,11 @@
 import express from "express"
 import { userController } from "../controllers/userController";
+import { auth } from "../middlewares/auth";
 
 const router = express.Router();
 
 //Users routes
-router.get('/profile', userController.getProfile)
-router.put('/profile',userController.updateProfile)
+router.get('/profile',auth, userController.getProfile)
+router.put('/profile',auth,userController.updateProfile)
 
 export default router;

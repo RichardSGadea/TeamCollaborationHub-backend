@@ -1,7 +1,7 @@
 
 import {Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { decode } from "punycode";
+
 
 export const auth = (req:Request, res:Response, next: NextFunction) => {
 
@@ -27,9 +27,7 @@ export const auth = (req:Request, res:Response, next: NextFunction) => {
             userFirstName:decoded.userFirstName
         }
 
-
         next();
-
 
     } catch (error) {
         res.status(401).json({
