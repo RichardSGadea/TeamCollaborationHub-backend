@@ -94,6 +94,7 @@ export const authController = {
                     id: true,
                     password: true,
                     email: true,
+                    firstName:true,
                 }
             })
 
@@ -117,7 +118,8 @@ export const authController = {
             const tokenPayload = {
                 userId: user.id,
                 userRole: user.role.name,
-                userEmail: user.email
+                userEmail: user.email,
+                userFirstName: user.firstName,
             }
 
             // Generate token
