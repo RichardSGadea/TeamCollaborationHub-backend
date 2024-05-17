@@ -6,6 +6,10 @@ import { groupController } from "../controllers/groupController";
 const router = express.Router();
 
 //Groups routes
+router.get('/',auth,groupController.getGroups)
+router.get('/:id',auth,groupController.getGroupById)
+
+//Protected routes
 router.post('/create',auth,authorize(["teacher"]),groupController.create)
 
 

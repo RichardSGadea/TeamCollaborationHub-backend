@@ -3,7 +3,7 @@ import { User } from "./User";
 import { TaskState } from "./TaskState";
 import { Group } from "./Group";
 
-@Entity()
+@Entity("tasks")
 export class Task extends BaseEntity{
     @PrimaryGeneratedColumn()
     id!:number;
