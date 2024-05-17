@@ -109,6 +109,58 @@ export const groupController = {
         }
     },
 
+    async addUserToGroup (req:Request,res:Response):Promise<void> {
+        try {
+            const userId = Number(req.body.userId); //User id
+            const groupId = Number(req.params.id); // Group id
+
+            // User exist?
+            const user = await User.findOne({
+                where: { id: userId }
+            });
+
+            if (!user) {
+                res.status(404).json({ message: "User not found" });
+                return;
+            }
+
+            // Group exist?
+            const group = await Group.findOne({
+                where: { id: groupId },
+                relations: ["users"]
+            });
+
+            if (!group) {
+                res.status(404).json({ message: "Group not found" });
+                return;
+            }
+
+            // User is in group?
+            const isUserInGroup = group.users?.some(groupUser => groupUser.id === userId);
+            if (isUserInGroup) {
+                res.status(400).json({ message: "User is already in the group" });
+                return;
+            }
+
+            // Add user to group
+            group.users?.push(user);
+            await group.save();
+
+            res.status(200).json({
+                message: "User added to the group",
+                group
+            });
+        } catch (error) {
+            console.error("Error adding user to group:", error);
+            res.status(500).json({
+                message: "Failed to add user to group"
+            });
+        }
+
+    },
+
+
+
 
 
 

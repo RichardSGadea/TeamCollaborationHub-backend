@@ -11,6 +11,7 @@ router.get('/:id',auth,groupController.getGroupById)
 
 //Protected routes
 router.post('/create',auth,authorize(["teacher"]),groupController.create)
+router.post('/:id/users',auth,authorize(["teacher"]),groupController.addUserToGroup)
 
 
 export default router;
