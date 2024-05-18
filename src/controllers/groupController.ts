@@ -161,6 +161,10 @@ export const groupController = {
         try {
             const groupId = Number(req.params.id);
 
+            const page = Number(req.query.page) || 1;
+
+            const limit = Number(req.query.limit) || 5;
+
             const [students, totalStudents] = await User.findAndCount({
                 select:{
                     id: true,
@@ -174,7 +178,9 @@ export const groupController = {
                 },
                 relations:{
                     members:true
-                }
+                },
+                skip: (page - 1) * limit,
+                take: limit
 
             })
 
@@ -190,8 +196,15 @@ export const groupController = {
                 res.status(404).json({ message: "No students outside the group found" });
                 return;
             }
-    
-            res.status(200).json(studentsOutOfGroup);
+
+            const totalPages = Math.ceil(totalStudents / limit);
+
+            res.status(200).json({
+                studentsOutOfGroup: studentsOutOfGroup,
+                current_page: page,
+                per_page: limit,
+                total_pages: totalPages,
+            });
             
         } catch (error) {
             res.status(500).json({
