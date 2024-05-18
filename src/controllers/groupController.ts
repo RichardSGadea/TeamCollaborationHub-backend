@@ -107,7 +107,7 @@ export const groupController = {
         }
     },
 
-    async addUserToGroup (req:Request,res:Response):Promise<void> {
+    async addUserToGroup(req: Request, res: Response): Promise<void> {
         try {
             const userId = Number(req.body.userId); //User id
             const groupId = Number(req.params.id); // Group id
@@ -157,7 +157,7 @@ export const groupController = {
 
     },
 
-    async getStudentsOutOfGroup (req:Request,res:Response): Promise <void> {
+    async getStudentsOutOfGroup(req: Request, res: Response): Promise<void> {
         try {
             const groupId = Number(req.params.id);
 
@@ -166,21 +166,22 @@ export const groupController = {
             const limit = Number(req.query.limit) || 5;
 
             const [students, totalStudents] = await User.findAndCount({
-                select:{
+                select: {
                     id: true,
                     firstName: true,
-                    lastName:true,
+                    lastName: true,
                     email: true,
                     roleId: true
                 },
-                where:{
+                where: {
                     role: UserRoles.STUDENT,
                 },
-                relations:{
-                    members:true
+                relations: {
+                    members: true
                 },
-                skip: (page - 1) * limit,
-                take: limit
+                order: {
+                    lastName: "ASC"
+                }
 
             })
 
@@ -197,21 +198,75 @@ export const groupController = {
                 return;
             }
 
-            const totalPages = Math.ceil(totalStudents / limit);
+            //Apply pagination of data filtered
+            const totalStudentsOutOfGroup = studentsOutOfGroup.length;
+            const totalPages = Math.ceil(totalStudentsOutOfGroup / limit);
+            const paginatedStudents = studentsOutOfGroup.slice((page - 1) * limit, page * limit);
 
             res.status(200).json({
-                studentsOutOfGroup: studentsOutOfGroup,
+                studentsOutOfGroup: paginatedStudents,
                 current_page: page,
                 per_page: limit,
                 total_pages: totalPages,
+                total_students: totalStudentsOutOfGroup,
             });
-            
+
         } catch (error) {
             res.status(500).json({
                 message: "Failed to retrieve users"
             });
         }
-    }
+    },
+    async deleteUserToGroup(req: Request, res: Response): Promise<void> {
+        try {
+            const userId = Number(req.body.userId); //User id
+            const groupId = Number(req.params.id); // Group id
+
+            // User exist?
+            const user = await User.findOne({
+                where: { id: userId }
+            });
+
+            if (!user) {
+                res.status(404).json({ message: "User not found" });
+                return;
+            }
+
+            // Group exist?
+            const group = await Group.findOne({
+                where: { id: groupId },
+                relations: ["users"]
+            });
+
+            if (!group) {
+                res.status(404).json({ message: "Group not found" });
+                return;
+            }
+
+            // ¿user in group?
+            const userIndex = group.users?.findIndex(u => u.id === userId);
+
+            if (userIndex === -1 || userIndex === undefined) {
+                res.status(404).json({ message: "User is not in the group" });
+                return;
+            }
+
+            // Delete user to group
+            group.users?.splice(userIndex, 1);;
+            await group.save();
+
+            res.status(200).json({
+                message: "User deleted to the group",
+                group
+            });
+        } catch (error) {
+            console.error("Error deleting user from group:", error);
+            res.status(500).json({
+                message: "Failed to delete user from group"
+            });
+        }
+
+    },
 
 
 
