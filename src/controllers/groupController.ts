@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { User } from "../models/User";
 import { Group } from "../models/Group";
 import { Task } from "../models/Task";
+import { UserRoles } from "../constants/UserRoles";
 
 
 export const groupController = {
@@ -79,20 +80,17 @@ export const groupController = {
 
     async getGroupById(req: Request, res: Response): Promise<void> {
         try {
-            const userId = Number(req.tokenData.userId);
             const groupId = Number(req.params.id);
 
-            console.log(`Retrieving group with ID: ${groupId} for user ID: ${userId}`);
 
             const groupToShow = await Group.findOne({
                 where: {
                     id: groupId,
-                    users: { id: userId }
                 },
                 relations: {
                     users: true,
                     tasks: true
-                }
+                },
             });
 
             if (!groupToShow) {
@@ -158,6 +156,49 @@ export const groupController = {
         }
 
     },
+
+    async getStudentsOutOfGroup (req:Request,res:Response): Promise <void> {
+        try {
+            const groupId = Number(req.params.id);
+
+            const [students, totalStudents] = await User.findAndCount({
+                select:{
+                    id: true,
+                    firstName: true,
+                    lastName:true,
+                    email: true,
+                    roleId: true
+                },
+                where:{
+                    role: UserRoles.STUDENT,
+                },
+                relations:{
+                    members:true
+                }
+
+            })
+
+            if (totalStudents === 0) {
+                res.status(404).json({ message: "Students not found" });
+                return;
+            }
+
+            //Filter users that no exist in group
+            const studentsOutOfGroup = students.filter(student => !student.members?.some(group => group.id === groupId))
+
+            if (studentsOutOfGroup.length === 0) {
+                res.status(404).json({ message: "No students outside the group found" });
+                return;
+            }
+    
+            res.status(200).json(studentsOutOfGroup);
+            
+        } catch (error) {
+            res.status(500).json({
+                message: "Failed to retrieve users"
+            });
+        }
+    }
 
 
 
