@@ -11,6 +11,7 @@ router.get('/:id',auth,groupController.getGroupById)
 
 //Protected routes
 router.post('/create',auth,authorize(["teacher"]),groupController.create)
+router.put('/:id',auth,authorize(["teacher"]),groupController.update)
 router.post('/:id/users',auth,authorize(["teacher"]),groupController.addUserToGroup)
 router.delete('/:id/users',auth,authorize(["teacher"]),groupController.deleteUserToGroup)
 router.get('/:id/users',auth,authorize(["teacher"]),groupController.getUsersFromGroup)

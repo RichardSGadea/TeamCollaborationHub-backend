@@ -21,6 +21,13 @@ export const groupController = {
                 return;
             }
 
+            if(nameGroup===""){
+                res.status(400).json({
+                    message: "The name field shouldn't be empty"
+                })
+                return;
+            }
+
             const user = await User.findOne({
                 where: {
                     id: userId,
@@ -46,6 +53,68 @@ export const groupController = {
         } catch (error) {
             res.status(500).json({
                 message: "Failed to create group"
+            })
+        }
+
+    },
+    async update(req: Request, res: Response): Promise<void> {
+        try {
+
+            const userId = Number(req.tokenData.userId);
+            const { nameGroup } = req.body;
+
+             const user = await User.findOne({
+                where: {
+                    id: userId,
+                }
+            })
+
+            if (!user) {
+                res.status(404).json({ message: "Restart Login, invalid token provided" });
+                return;
+            }
+
+            const groupId = Number(req.params.id);
+
+            const groupToUpdate = await Group.findOne({
+                where: {
+                    id: groupId,
+                    
+                },
+            });
+
+            if (!groupToUpdate) {
+                res.status(404).json({
+                    message: "Group not found"
+                })
+                return;
+            }
+            
+            if (!nameGroup) {
+                res.status(400).json({
+                    message: "All fields must be provided"
+                })
+                return;
+            }
+
+            if(nameGroup===""){
+                res.status(400).json({
+                    message: "The name field shouldn't be empty"
+                })
+                return;
+            }
+
+            groupToUpdate.name= nameGroup;
+
+            await Group.save(groupToUpdate)
+
+            res.status(201).json({
+                message: "Group has been updated"
+            })
+
+        } catch (error) {
+            res.status(500).json({
+                message: "Failed to update group"
             })
         }
 
@@ -81,8 +150,7 @@ export const groupController = {
     async getGroupById(req: Request, res: Response): Promise<void> {
         try {
             const groupId = Number(req.params.id);
-
-
+            
             const groupToShow = await Group.findOne({
                 where: {
                     id: groupId,
