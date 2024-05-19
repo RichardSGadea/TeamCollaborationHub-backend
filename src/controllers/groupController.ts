@@ -157,6 +157,62 @@ export const groupController = {
 
     },
 
+    async getUsersFromGroup(req: Request, res: Response): Promise<void> {
+        try {
+            const groupId = Number(req.params.id);
+
+            const page = Number(req.query.page) || 1;
+
+            const limit = Number(req.query.limit) || 5;
+
+            const [users, totalUsers] = await User.findAndCount({
+                select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                    roleId: true
+                },
+                relations: {
+                    members: true
+                },
+                
+
+            })
+
+            if (totalUsers === 0) {
+                res.status(404).json({ message: "Students not found" });
+                return;
+            }
+
+            //Filter users that no exist in group
+            const studentsFromGroup = users.filter(user => user.members?.some(group => group.id === groupId))
+
+            if (studentsFromGroup.length === 0) {
+                res.status(404).json({ message: "No students from group found" });
+                return;
+            }
+
+            //Apply pagination of data filtered
+            const totalStudentsFromGroup = studentsFromGroup.length;
+            const totalPages = Math.ceil(totalStudentsFromGroup / limit);
+            const paginatedStudents = studentsFromGroup.slice((page - 1) * limit, page * limit);
+
+            res.status(200).json({
+                studentsFromGroup: paginatedStudents,
+                current_page: page,
+                per_page: limit,
+                total_pages: totalPages,
+                total_students: totalStudentsFromGroup,
+            });
+
+        } catch (error) {
+            res.status(500).json({
+                message: "Failed to retrieve users"
+            });
+        }
+    },
+
     async getStudentsOutOfGroup(req: Request, res: Response): Promise<void> {
         try {
             const groupId = Number(req.params.id);
@@ -221,7 +277,7 @@ export const groupController = {
         try {
             const userId = Number(req.body.userId); //User id
             const groupId = Number(req.params.id); // Group id
-
+            
             // User exist?
             const user = await User.findOne({
                 where: { id: userId }

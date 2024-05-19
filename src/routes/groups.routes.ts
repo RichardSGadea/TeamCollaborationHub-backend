@@ -13,6 +13,7 @@ router.get('/:id',auth,groupController.getGroupById)
 router.post('/create',auth,authorize(["teacher"]),groupController.create)
 router.post('/:id/users',auth,authorize(["teacher"]),groupController.addUserToGroup)
 router.delete('/:id/users',auth,authorize(["teacher"]),groupController.deleteUserToGroup)
+router.get('/:id/users',auth,authorize(["teacher"]),groupController.getUsersFromGroup)
 router.get('/:id/outUsers',auth,authorize(["teacher"]),groupController.getStudentsOutOfGroup)
 
 
