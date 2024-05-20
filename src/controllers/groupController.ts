@@ -149,6 +149,7 @@ export const groupController = {
 
     async getGroupById(req: Request, res: Response): Promise<void> {
         try {
+            const userId = Number(req.tokenData.userId);
             const groupId = Number(req.params.id);
             
             const groupToShow = await Group.findOne({
@@ -165,6 +166,14 @@ export const groupController = {
                 res.status(404).json({ message: "Group not found" });
                 return;
             }
+
+            // User is in group?
+            const isUserInGroup = groupToShow.users?.some(groupUser => groupUser.id === userId);
+            if (!isUserInGroup) {
+                res.status(400).json({ message: "You don't belong as a user in this group" });
+                return;
+            }
+
 
             res.json(groupToShow);
         } catch (error) {
