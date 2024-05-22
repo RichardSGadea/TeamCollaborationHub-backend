@@ -2,6 +2,7 @@ import express from "express"
 import { auth } from "../middlewares/auth";
 import { authorize } from "../middlewares/authorize";
 import { groupController } from "../controllers/groupController";
+import { taskController } from "../controllers/taskController";
 
 const router = express.Router();
 
@@ -16,6 +17,11 @@ router.post('/:id/users',auth,authorize(["teacher"]),groupController.addUserToGr
 router.delete('/:id/users',auth,authorize(["teacher"]),groupController.deleteUserToGroup)
 router.get('/:id/users',auth,authorize(["teacher"]),groupController.getUsersFromGroup)
 router.get('/:id/outUsers',auth,authorize(["teacher"]),groupController.getStudentsOutOfGroup)
+
+//Group tasks routes
+router.post('/:id/tasks/create',auth,taskController.create)
+router.get('/:id/tasks',auth,taskController.getTasks)
+
 
 
 export default router;

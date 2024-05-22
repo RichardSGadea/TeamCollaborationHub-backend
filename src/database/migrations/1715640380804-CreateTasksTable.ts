@@ -41,6 +41,7 @@ export class CreateTasksTable1715640380804 implements MigrationInterface {
                     {
                         name: "end_date",
                         type: "timestamp",
+                        isNullable:true,
                     },
                     {
                         name: "deadline",
@@ -57,6 +58,7 @@ export class CreateTasksTable1715640380804 implements MigrationInterface {
                     {
                         name: "state_id",
                         type: "int",
+                        default: "1"
                     },
                 ],
                 foreignKeys: [

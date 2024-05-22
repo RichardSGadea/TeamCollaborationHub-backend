@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { User } from "../models/User";
 import { Group } from "../models/Group";
-import { Task } from "../models/Task";
 import { UserRoles } from "../constants/UserRoles";
 
 
