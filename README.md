@@ -1,6 +1,6 @@
 # Backend app
 <div align="center">
-  <img src="./img/TeamCollaborationHubIcon/png" alt="imagen-db" width="100" height="100" />
+  <img src="./img/TeamCollaborationHubIcon.png" alt="imagen-db" width="100" height="100" />
 </div>
 <div align="center">TeamCollaborationHub</div>
 <br></br>
@@ -15,8 +15,6 @@
     <li><a href="#diagrama-bd">Diagrama</a></li>
     <li><a href="#instalación-en-local">Instalación</a></li>
     <li><a href="#endpoints">Endpoints</a></li>
-    <li><a href="#database">DataBase (accesos y registros)</a></li>
-    <a></li>
     <li><a href="#mejoras">Mejoras</a></li>
     <li><a href="#licencia">Licencia</a></li>
     
@@ -163,7 +161,6 @@ Los endpoints estan realizados con el puerto 4000, cambiar segun configuración
     
         POST http://localhost:4000/api/groups/create
      body:
-
         ``` js
         {
 	        "nameGroup":"Group Team"
@@ -172,7 +169,6 @@ Los endpoints estan realizados con el puerto 4000, cambiar segun configuración
     - 🚛UPDATE GROUP(Introducir token para la identificación(Auth))
 
         PUT http://localhost:4000/api/groups/:id
-
      body:
         ``` js
         {
