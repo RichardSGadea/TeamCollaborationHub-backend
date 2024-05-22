@@ -19,7 +19,7 @@ router.get('/:id/users',auth,authorize(["teacher"]),groupController.getUsersFrom
 router.get('/:id/outUsers',auth,authorize(["teacher"]),groupController.getStudentsOutOfGroup)
 
 //Group tasks routes
-router.post('/:id/tasks/create',auth,taskController.create)
+router.post('/:id/tasks',auth,taskController.create)
 router.get('/:id/tasks',auth,taskController.getTasks)
 
 

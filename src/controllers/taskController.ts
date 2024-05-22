@@ -69,7 +69,9 @@ export const taskController = {
                 return;
             }
 
-            if (typeof estimatedHours !== "number") {
+            const estimated_hours= Number(estimatedHours)
+
+            if (Number.isNaN(estimated_hours)) {
                 res.status(400).json({
                     
                     message: `Remember you must insert a number, try again`
@@ -80,7 +82,7 @@ export const taskController = {
             const createTask = await Task.create({
                 name: name,
                 description: description,
-                estimatedHours: estimatedHours,
+                estimatedHours: estimated_hours,
                 deadline:deadline,
                 userId: userId,
                 groupId: groupId
@@ -139,7 +141,16 @@ export const taskController = {
                 return;
             }
 
-            res.json(groupToFind.tasks);
+            const [tasksToShow,totalTasks] = await Task.findAndCount({
+                where:{
+                    groupId:groupId,
+                },
+                relations:{
+                    taskState:true
+                }
+            })
+
+            res.json(tasksToShow);
             
         } catch (error) {
             res.status(500).json({
