@@ -3,6 +3,7 @@ import { User } from "../models/User";
 import { Task } from "../models/Task";
 import { Group } from "../models/Group";
 
+
 export const taskController = {
 
     async create(req: Request, res: Response): Promise<void> {
@@ -157,6 +158,164 @@ export const taskController = {
                 message: "Failed to retrieve tasks info"
             });  
         }
+    },
+
+    async getTaskById(req: Request, res: Response): Promise<void> {
+
+        try {
+
+            const userId = Number(req.tokenData.userId);
+            const groupId = Number(req.params.id);
+            const taskId = Number(req.params.task);
+
+            const user = await User.findOne({
+                where: {
+                    id: userId,
+                }
+            })
+
+            if (!user) {
+                res.status(404).json({ message: "Restart Login, invalid token provided" });
+                return;
+            }
+
+            const groupToFind = await Group.findOne({
+                where: {
+                    id: groupId,
+                },
+                relations: {
+                    users: true,
+                    tasks: true
+                },
+            });
+
+            if (!groupToFind) {
+                res.status(404).json({ message: "Group not found" });
+                return;
+            }
+
+            // User is in group?
+            const isUserInGroup = groupToFind.users?.some(groupUser => groupUser.id === userId);
+            if (!isUserInGroup) {
+                res.status(400).json({ message: "You don't belong as a user in this group" });
+                return;
+            }
+
+            const [tasksToShow] = await Task.find({
+                where:{
+                    groupId:groupId,
+                    id:taskId,
+                },
+                relations:{
+                    taskState:true
+                }
+            })
+
+            res.json(tasksToShow);
+            
+        } catch (error) {
+            res.status(500).json({
+                message: "Failed to retrieve task info"
+            });  
+        }
+    },
+
+    async deleteTask(req: Request, res: Response): Promise<void> {
+        try {
+
+
+            
+        } catch (error) {
+            
+        }
+
+    },
+
+    async modifyTask(req: Request, res: Response): Promise<void> {
+        try {
+
+            const userId = Number(req.tokenData.userId);
+            const groupId = Number(req.params.id);
+            const taskId = Number(req.params.task);
+
+            const {spentHours,stateId,...resTaskData} = req.body
+
+            const user = await User.findOne({
+                where: {
+                    id: userId,
+                }
+            })
+
+            if (!user) {
+                res.status(404).json({ message: "Restart Login, invalid token provided" });
+                return;
+            }
+
+            const groupToFind = await Group.findOne({
+                where: {
+                    id: groupId,
+                },
+                relations: {
+                    users: true,
+                    tasks: true
+                },
+            });
+
+            if (!groupToFind) {
+                res.status(404).json({ message: "Group not found" });
+                return;
+            }
+
+            // User is in group?
+            const isUserInGroup = groupToFind.users?.some(groupUser => groupUser.id === userId);
+            if (!isUserInGroup) {
+                res.status(400).json({ message: "You don't belong as a user in this group" });
+                return;
+            }
+
+            const taskToUpdate = await Task.findOne({
+                select:{
+                    id:true
+                },
+                where:{
+                    groupId:groupId,
+                    id:taskId,
+                }
+            })
+            
+            const spent_hours= Number(spentHours)
+            const state_id= Number(stateId)
+
+            if (Number.isNaN(spent_hours) || Number.isNaN(state_id)) {
+                res.status(400).json({
+                    
+                    message: `Remember you must insert a number, try again`
+                });
+                return;
+            }
+
+            taskToUpdate!.spentHours = spent_hours
+            taskToUpdate!.stateId = state_id
+            
+
+            const updatedTask: Partial<Task> = {
+                ...taskToUpdate,
+                ...resTaskData,
+            };
+
+            await Task.save(updatedTask);
+
+            res.status(202).json({
+                message: "Task updated successfully",
+                task:updatedTask
+            })
+            
+        } catch (error) {
+            res.status(500).json({
+                message: "Failed to update task"
+            });  
+        }
+
     },
 
 

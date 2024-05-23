@@ -21,6 +21,8 @@ router.get('/:id/outUsers',auth,authorize(["teacher"]),groupController.getStuden
 //Group tasks routes
 router.post('/:id/tasks',auth,taskController.create)
 router.get('/:id/tasks',auth,taskController.getTasks)
+router.get('/:id/tasks/:task',auth,taskController.getTaskById)
+router.put('/:id/tasks/:task',auth,taskController.modifyTask)
 
 
 
