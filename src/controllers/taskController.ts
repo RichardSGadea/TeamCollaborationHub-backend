@@ -223,10 +223,30 @@ export const taskController = {
     async deleteTask(req: Request, res: Response): Promise<void> {
         try {
 
+            const taskId = Number(req.params.task);
+
+            const taskToDelete = await Task.findOne({
+                where:{
+                    id:taskId
+                }
+            })
+
+            if (!taskToDelete) {
+                res.status(404).json({
+                    message: "Task not found"
+                })
+                return;
+            }
+
+            await Task.delete(taskId);
+
+            res.status(200).json({ message: "Task deleted successfully" });
 
             
         } catch (error) {
-            
+            res.status(500).json({
+                message: "Failed to delete task"
+            })
         }
 
     },
