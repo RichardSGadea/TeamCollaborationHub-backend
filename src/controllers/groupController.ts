@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { User } from "../models/User";
 import { Group } from "../models/Group";
 import { UserRoles } from "../constants/UserRoles";
+import { Task } from "../models/Task";
 
 
 export const groupController = {
@@ -20,7 +21,7 @@ export const groupController = {
                 return;
             }
 
-            if(nameGroup===""){
+            if (nameGroup === "") {
                 res.status(400).json({
                     message: "The name field shouldn't be empty"
                 })
@@ -62,7 +63,7 @@ export const groupController = {
             const userId = Number(req.tokenData.userId);
             const { nameGroup } = req.body;
 
-             const user = await User.findOne({
+            const user = await User.findOne({
                 where: {
                     id: userId,
                 }
@@ -78,7 +79,7 @@ export const groupController = {
             const groupToUpdate = await Group.findOne({
                 where: {
                     id: groupId,
-                    
+
                 },
             });
 
@@ -88,7 +89,7 @@ export const groupController = {
                 })
                 return;
             }
-            
+
             if (!nameGroup) {
                 res.status(400).json({
                     message: "All fields must be provided"
@@ -96,14 +97,14 @@ export const groupController = {
                 return;
             }
 
-            if(nameGroup===""){
+            if (nameGroup === "") {
                 res.status(400).json({
                     message: "The name field shouldn't be empty"
                 })
                 return;
             }
 
-            groupToUpdate.name= nameGroup;
+            groupToUpdate.name = nameGroup;
 
             await Group.save(groupToUpdate)
 
@@ -114,6 +115,57 @@ export const groupController = {
         } catch (error) {
             res.status(500).json({
                 message: "Failed to update group"
+            })
+        }
+
+    },
+
+    async delete(req: Request, res: Response): Promise<void> {
+
+        try {
+
+            const groupId = Number(req.params.id);
+
+            const groupToDelete = await Group.findOne({
+                where: {
+                    id: groupId,
+                },
+                relations: {
+                    tasks: true,
+                    users: true,
+                }
+            });
+
+            if (!groupToDelete) {
+                res.status(404).json({
+                    message: "Group not found"
+                })
+                return;
+            }
+
+            const tasksFromGroup = await Task.find({ where: { groupId: groupId } })
+
+            for (let element of tasksFromGroup) {
+                await Task.delete(element.id)
+            }
+
+            if (groupToDelete.users) {
+                for (const user of groupToDelete.users) {
+                    await User.createQueryBuilder()
+                        .relation(User, "members")
+                        .of(user.id)
+                        .remove(groupToDelete.id);
+                }
+            }
+
+            await Group.delete(groupId);
+
+            res.status(200).json({ message: "Group deleted successfully" });
+
+        } catch (error) {
+            res.status(500).json({
+                error: error,
+                message: "Failed to delete group"
             })
         }
 
@@ -150,7 +202,7 @@ export const groupController = {
         try {
             const userId = Number(req.tokenData.userId);
             const groupId = Number(req.params.id);
-            
+
             const groupToShow = await Group.findOne({
                 where: {
                     id: groupId,
@@ -252,7 +304,7 @@ export const groupController = {
                 relations: {
                     members: true
                 },
-                
+
 
             })
 
@@ -353,7 +405,7 @@ export const groupController = {
         try {
             const userId = Number(req.body.userId); //User id
             const groupId = Number(req.params.id); // Group id
-            
+
             // User exist?
             const user = await User.findOne({
                 where: { id: userId }
