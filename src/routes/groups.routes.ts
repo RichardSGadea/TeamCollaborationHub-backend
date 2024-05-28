@@ -8,9 +8,10 @@ const router = express.Router();
 
 //Groups routes
 router.get('/',auth,groupController.getGroups)
-router.get('/:id',auth,groupController.getGroupById)
+router.get('/group/:id',auth,groupController.getGroupById)
 
 //Protected routes
+router.get('/allGroups',auth,authorize(["admin"]),groupController.getAllGroups)
 router.post('/create',auth,authorize(["teacher"]),groupController.create)
 router.put('/:id',auth,authorize(["teacher"]),groupController.update)
 router.delete('/:id',auth,authorize(["teacher"]),groupController.delete)

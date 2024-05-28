@@ -17,8 +17,8 @@ export const userController = {
                 },
             });
 
-            if (!user){
-                res.status(404).json({ message: "User not found"});
+            if (!user) {
+                res.status(404).json({ message: "User not found" });
                 return
             }
 
@@ -30,7 +30,7 @@ export const userController = {
             })
         }
     },
-    
+
     async updateProfile(req: Request, res: Response): Promise<void> {
         try {
             const userId = Number(req.tokenData.userId);
@@ -86,14 +86,14 @@ export const userController = {
 
     async getStudents(req: Request, res: Response): Promise<void> {
         try {
-            
+
             const [students, totalStudents] = await User.findAndCount({
-                select:{
+                select: {
                     id: true,
                     firstName: true,
                     email: true,
                 },
-                where:{
+                where: {
                     role: UserRoles.STUDENT
                 }
             })
@@ -112,6 +112,42 @@ export const userController = {
             res.status(500).json({
                 message: "Failed to retrieve students"
             })
+        }
+    },
+
+    async getAllUsers(req: Request, res: Response): Promise<void> {
+
+        try {
+            const page = Number(req.query.page) || 1;
+
+            const limit = Number(req.query.limit) || 10;
+
+            const [users, totalUsers] = await User.findAndCount({
+                relations:{
+                    role:true
+                },
+                skip: (page - 1) * limit,
+                take: limit
+            })
+
+            if (!users) {
+                res.status(404).json({ message: "Users not found" });
+                return;
+            }
+
+            const totalPages = Math.ceil(totalUsers / limit);
+
+            res.status(200).json({
+                users: users,
+                current_page: page,
+                per_page: limit,
+                total_pages: totalPages,
+                total_users:totalUsers,
+            });
+        } catch (error) {
+            res.status(500).json({
+                message: "Failed to retrieve users",
+            });
         }
     },
 }

@@ -449,14 +449,44 @@ export const groupController = {
                 message: "Failed to delete user from group"
             });
         }
-
     },
 
+    async getAllGroups(req:Request,res:Response): Promise <void> {
+        try {
 
+            const page = Number(req.query.page) || 1;
 
+            const limit = Number(req.query.limit) || 10;
 
+            const [groups,totalGroups] = await Group.findAndCount({
+                relations:{
+                    users:true,
+                    tasks:true,
+                },
+                skip: (page - 1) * limit,
+                take: limit
+            })
 
+            if (!groups) {
+                res.status(404).json({ message: "Groups not found" });
+                return;
+            }
 
+            const totalPages = Math.ceil(totalGroups / limit);
 
+            res.status(200).json({
+                groups: groups,
+                current_page: page,
+                per_page: limit,
+                total_pages: totalPages,
+                total_users:totalGroups,
+            });
+
+        } catch (error) {
+            res.status(500).json({
+                message: "Failed to retrieve groups",
+            });
+        }
+    },
 
 }

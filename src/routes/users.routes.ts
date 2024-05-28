@@ -11,6 +11,7 @@ router.put('/profile',auth,userController.updateProfile)
 
 //Protected routes
 router.get('/students',auth,authorize(["admin","teacher"]),userController.getStudents)
+router.get('/allUsers',auth,authorize(["admin"]),userController.getAllUsers)
 
 
 export default router;
