@@ -489,4 +489,34 @@ export const groupController = {
         }
     },
 
+    async getOneGroupById (req:Request, res:Response): Promise <void> {
+        try {
+            const groupId = Number(req.params.id);
+
+            const groupToShow = await Group.findOne({
+                where: {
+                    id: groupId,
+                },
+                relations: {
+                    users: true,
+                    tasks: true
+                },
+            });
+
+            if (!groupToShow) {
+                res.status(404).json({ message: "Group not found" });
+                return;
+            }
+
+            console.log(groupToShow);
+            
+            res.json(groupToShow);
+
+        } catch (error) {
+            res.status(500).json({
+                message: "Failed to retrieve group info"
+            });
+        }
+    },
+
 }
