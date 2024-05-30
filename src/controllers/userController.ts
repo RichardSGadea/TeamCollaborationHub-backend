@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { User } from "../models/User";
 import bcrypt from "bcrypt";
 import { UserRoles } from "../constants/UserRoles";
+import { json } from "stream/consumers";
+import { log } from "console";
 
 export const userController = {
     async getProfile(req: Request, res: Response): Promise<void> {
@@ -148,6 +150,76 @@ export const userController = {
             res.status(500).json({
                 message: "Failed to retrieve users",
             });
+        }
+    },
+
+    async getUserById (req:Request, res:Response): Promise <void> {
+        try {
+            const userId = Number(req.params.id)
+            
+            const userToShow = await User.findOne({
+                relations:{
+                    role:true
+                },
+                select:{
+                    roleId:true,
+                    firstName:true,
+                    lastName:true,
+                    email:true,
+                    id:true
+                },
+                where:{
+                    id:userId,
+                }
+            })
+
+            if(!userToShow){
+                res.status(404).json({ message: "User not found" });
+                return;
+            }
+
+            res.status(200).json(userToShow)
+
+        } catch (error) {
+            res.status(500).json({
+                message: "Failed to retrieve user"
+            })
+        }
+    },
+    async putUserById (req:Request, res:Response): Promise <void> {
+        try {
+            const userId = Number(req.params.id)
+
+            const { password, role, ...resUserData } = req.body
+
+            const userToUpdate = await User.findOne({
+                select: {
+                    id: true,
+                    password: true,
+                },
+                where: { id: userId },
+            })
+
+            if (password) {
+                const hashedPassword = bcrypt.hashSync(password, 10);
+                userToUpdate!.password = hashedPassword
+            }
+
+            const updatedUser: Partial<User> = {
+                ...userToUpdate,
+                ...resUserData,
+            };
+
+            await User.save(updatedUser);
+
+            res.status(202).json({
+                message: "User profile updated successfully"
+            })
+
+        } catch (error) {
+            res.status(500).json({
+                message: "Failed to update user"
+            })
         }
     },
 }
