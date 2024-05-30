@@ -95,6 +95,7 @@ export const authController = {
                     password: true,
                     email: true,
                     firstName:true,
+                    isActive:true,
                 }
             })
 
@@ -111,6 +112,13 @@ export const authController = {
             if (!isPasswordCorrect) {
                 res.status(400).json({
                     message: "Bad credentials"
+                })
+                return;
+            }
+
+            if(!user.isActive){
+                res.status(400).json({
+                    message: "This user is not active. Contact the admin"
                 })
                 return;
             }

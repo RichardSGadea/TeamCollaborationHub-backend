@@ -166,7 +166,8 @@ export const userController = {
                     firstName:true,
                     lastName:true,
                     email:true,
-                    id:true
+                    id:true,
+                    isActive:true
                 },
                 where:{
                     id:userId,
