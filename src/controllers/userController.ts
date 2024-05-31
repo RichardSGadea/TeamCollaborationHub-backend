@@ -37,7 +37,7 @@ export const userController = {
         try {
             const userId = Number(req.tokenData.userId);
 
-            const { yourPassword, newPassword, role, ...resUserData } = req.body
+            const { yourPassword, newPassword, role,email, ...resUserData } = req.body
 
             const userToUpdate = await User.findOne({
                 select: {
@@ -46,6 +46,17 @@ export const userController = {
                 },
                 where: { id: userId },
             })
+
+            const emailRegex = /^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i
+
+
+            if (!emailRegex.test(email)) {
+                res.status(400).json({
+                    message: "Invalid email"
+                })
+                return
+            }
+
 
             if (yourPassword) {
                 const isPasswordCorrect = bcrypt.compareSync(yourPassword, userToUpdate!.password);
@@ -125,8 +136,8 @@ export const userController = {
             const limit = Number(req.query.limit) || 10;
 
             const [users, totalUsers] = await User.findAndCount({
-                relations:{
-                    role:true
+                relations: {
+                    role: true
                 },
                 skip: (page - 1) * limit,
                 take: limit
@@ -144,7 +155,7 @@ export const userController = {
                 current_page: page,
                 per_page: limit,
                 total_pages: totalPages,
-                total_users:totalUsers,
+                total_users: totalUsers,
             });
         } catch (error) {
             res.status(500).json({
@@ -153,28 +164,28 @@ export const userController = {
         }
     },
 
-    async getUserById (req:Request, res:Response): Promise <void> {
+    async getUserById(req: Request, res: Response): Promise<void> {
         try {
             const userId = Number(req.params.id)
-            
+
             const userToShow = await User.findOne({
-                relations:{
-                    role:true
+                relations: {
+                    role: true
                 },
-                select:{
-                    roleId:true,
-                    firstName:true,
-                    lastName:true,
-                    email:true,
-                    id:true,
-                    isActive:true
+                select: {
+                    roleId: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                    id: true,
+                    isActive: true
                 },
-                where:{
-                    id:userId,
+                where: {
+                    id: userId,
                 }
             })
 
-            if(!userToShow){
+            if (!userToShow) {
                 res.status(404).json({ message: "User not found" });
                 return;
             }
@@ -187,11 +198,11 @@ export const userController = {
             })
         }
     },
-    async putUserById (req:Request, res:Response): Promise <void> {
+    async putUserById(req: Request, res: Response): Promise<void> {
         try {
             const userId = Number(req.params.id)
 
-            const { password, role, ...resUserData } = req.body
+            const { password, role,email, ...resUserData } = req.body
 
             const userToUpdate = await User.findOne({
                 select: {
@@ -200,6 +211,16 @@ export const userController = {
                 },
                 where: { id: userId },
             })
+
+            const emailRegex = /^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i
+
+
+            if (!emailRegex.test(email)) {
+                res.status(400).json({
+                    message: "Invalid email"
+                })
+                return
+            }
 
             if (password) {
                 const hashedPassword = bcrypt.hashSync(password, 10);

@@ -16,7 +16,7 @@ export const groupController = {
 
             if (!nameGroup) {
                 res.status(400).json({
-                    message: "All fields must be provided"
+                    message: "Insert group name. Try again."
                 })
                 return;
             }
@@ -92,7 +92,7 @@ export const groupController = {
 
             if (!nameGroup) {
                 res.status(400).json({
-                    message: "All fields must be provided"
+                    message: "All fields must be provided, insert group name"
                 })
                 return;
             }
@@ -507,8 +507,6 @@ export const groupController = {
                 res.status(404).json({ message: "Group not found" });
                 return;
             }
-
-            console.log(groupToShow);
             
             res.json(groupToShow);
 
