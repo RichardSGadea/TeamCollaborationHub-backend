@@ -244,4 +244,61 @@ export const userController = {
             })
         }
     },
+
+    async createUser (req:Request, res:Response): Promise <void>{
+
+        try {
+
+            const {firstName, lastName,email} = req.body 
+
+            if(!firstName || !lastName || !email){
+                res.status(400).json({
+                    message:"All fields must be provided"
+                })
+                return;
+            }
+
+            const emailRegex = /^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i
+
+            if (!emailRegex.test(email)) {
+                res.status(400).json({
+                    message: "Invalid email"
+                })
+                return;
+            }
+
+            const users = await User.find();
+            for (let element of users) {
+                if (element.email === email) {
+                    res.status(400).json({
+                        message: "Email is already in use",
+                    });
+                    return;
+                }
+            };
+
+            const hashedPassword = bcrypt.hashSync("12345678", 10);
+
+            const userToCreate = User.create({
+                firstName: firstName,
+                lastName:lastName,
+                email: email,
+                password: hashedPassword,
+                role: UserRoles.TEACHER
+            });
+
+            await User.save(userToCreate);
+
+            res.status(201).json({
+                message: "Teacher has been created"
+            });
+
+
+        } catch (error) {
+            res.status(500).json({
+                message: "Failed to create teacher",
+            })
+        }
+
+    },
 }

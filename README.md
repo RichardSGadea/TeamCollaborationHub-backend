@@ -170,6 +170,18 @@ Los endpoints estan realizados con el puerto 4000, cambiar segun configuración
         }
         ```
 
+    - 🚛CREATE USER TEACHER
+
+         POST http://localhost:4000/api/users/create
+      body:
+      ``` js
+            {
+               "firstName":"Profe",
+	            "lastName":"Profe",
+	            "email":"profe@profe.com"
+            }
+      ```
+
 - 👨‍👩‍👧‍👦GROUPS
     - 🚛GET GROUPS (Introducir token para la identificación(Auth))
     

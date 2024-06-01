@@ -14,6 +14,7 @@ router.get('/allUsers/:id',auth,authorize(["admin"]),userController.getUserById)
 router.put('/allUsers/:id',auth,authorize(["admin"]),userController.putUserById)
 router.get('/students',auth,authorize(["admin","teacher"]),userController.getStudents)
 router.get('/allUsers',auth,authorize(["admin"]),userController.getAllUsers)
+router.post('/create',auth,authorize(["admin"]),userController.createUser)
 
 
 export default router;
