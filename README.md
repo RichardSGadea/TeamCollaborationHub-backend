@@ -62,7 +62,7 @@ Tecnologías utilizadas:
 
 ## Diagrama BD
 
-<img src="./img/DiagramaBD.png" alt="imagen-db" width="100" height="100" />
+<img src="./img/DiagramaBD.png" alt="imagen-db" style="max-width: 100%"/>
 
 ## Instalación en local
 
@@ -289,3 +289,7 @@ Los endpoints estan realizados con el puerto 4000, cambiar segun configuración
 - Creación de un foro al crear un grupo (CRUD de comentarios en el foro)
 
 ## Licencia
+
+Proyecto desarrollado por Richard Sanz Gadea, bajo licencia MIT.
+
+Consulta el archivo <a href="./LICENSE">`LICENSE`</a> para más información.
