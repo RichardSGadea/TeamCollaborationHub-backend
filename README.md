@@ -26,6 +26,8 @@ Crear una web funcional sobre una aplicación para organización y seguimiento d
 
 
 ## Sobre el proyecto
+En este proyecto, como profesores, podemos gestionar grupos (crear,añadir/elminar alumnos, borrar y visualizar información). Como estudiantes podemos visualizar información acerca del grupo y gestionar tareas asociadas a ese grupo (crear,modificar,borrar). Y como administradores podemos gestionar tanto usuarios como grupos. 
+Cada usuario dispondrá de una cuenta o perfil en el que pueda actualizar sus datos introducidos en el registro inicial.
 
 ## Stack
 Tecnologías utilizadas:
@@ -60,7 +62,7 @@ Tecnologías utilizadas:
 
 ## Diagrama BD
 
-
+<img src="./img/DiagramaBD.png" alt="imagen-db" width="100" height="100" />
 
 ## Instalación en local
 
@@ -130,7 +132,7 @@ Los endpoints estan realizados con el puerto 4000, cambiar segun configuración
       ```
 - 🙍‍♂️USERS
 
-   - 🚛PROFILE USER (Introducir token para la identificación(Auth))
+   - 🚛GET PROFILE USER (Introducir token para la identificación(Auth))
 
       GET http://localhost:4000/api/users/profile
    
@@ -147,6 +149,26 @@ Los endpoints estan realizados con el puerto 4000, cambiar segun configuración
     - 🚛GET STUDENTS (Introducir token para la identificación(Auth))
 
         GET http://localhost:4000/api/users/students
+    
+    - 🚛GET ALL USERS (Introducir token para la identificación(Auth))
+
+        GET http://localhost:4000/api/users/allUsers
+    
+    - 🚛GET USER BY ID (Introducir token para la identificación(Auth))
+
+        GET http://localhost:4000/api/users/allUsers/:id
+
+    - 🚛UPDATE USER BY ID (Introducir token para la identificación(Auth))
+
+        PUT http://localhost:4000/api/users/allUsers/:id
+
+        body:
+        ``` js
+        {
+            "firstName": "NewFirstName", 
+            "lastName": "NewLastName",
+        }
+        ```
 
 - 👨‍👩‍👧‍👦GROUPS
     - 🚛GET GROUPS (Introducir token para la identificación(Auth))
@@ -155,7 +177,7 @@ Los endpoints estan realizados con el puerto 4000, cambiar segun configuración
 
     - 🚛GET GROUPS BY ID (Introducir token para la identificación(Auth))
     
-        GET http://localhost:4000/api/groups/:id
+        GET http://localhost:4000/api/groups/group/:id
     
     - 🚛CREATE GROUP(Introducir token para la identificación(Auth))
     
@@ -203,7 +225,58 @@ Los endpoints estan realizados con el puerto 4000, cambiar segun configuración
 
         GET http://localhost:4000/api/groups/:id/outUsers
 
+    - 🚛GET ALL GROUPS (Introducir token para la identificación(Auth))
+
+        GET http://localhost:4000/api/groups/allGroups
+
+    - 🚛GET GROUP FROM ALL GROUPS (Introducir token para la identificación(Auth))
+
+        GET http://localhost:4000/api/groups/allGroups/:id
+
+    - 🚛DELETE GROUP (Introducir token para la identificación(Auth))
+
+        DELETE http://localhost:4000/api/groups/:id
+
 - 👨‍🎓TASKS
+
+    - 🚛GET TASKS FROM GROUP (Introducir token para la identificación(Auth))
+
+        GET http://localhost:4000/api/groups/:id/tasks
+
+    - 🚛GET TASK FROM GROUP BY ID (Introducir token para la identificación(Auth))
+
+        GET http://localhost:4000/api/groups/:id/tasks/:task
+
+    - 🚛CREATE TASK TO THE GROUP(Introducir token para la identificación(Auth))
+    
+        POST http://localhost:4000/api/groups/:id/tasks
+     body:
+
+        ``` js
+        {
+	        "name":"TaskName",
+            "description":"Do something",
+            "estimatedHours":"2",
+            "deadline":"2025-06-08"
+        }
+        ```
+
+    - - 🚛UPDATE TASK FROM GROUP(Introducir token para la identificación(Auth))
+
+        PUT http://localhost:4000/api/groups/:id/tasks/:task
+     body:
+
+        ``` js
+        {
+	        "description":"NewDescription"
+        }
+        ```
+    
+    - 🚛DELETE TASK FROM GROUP (Introducir token para la identificación(Auth))
+
+        DELETE http://localhost:4000/api/groups/:id/tasks/:task
+        
+    
 
 </details>
 <br>
@@ -211,5 +284,8 @@ Los endpoints estan realizados con el puerto 4000, cambiar segun configuración
 
 ## Mejoras
 
+- Implementación de envio de correo electronico
+
+- Creación de un foro al crear un grupo (CRUD de comentarios en el foro)
 
 ## Licencia
